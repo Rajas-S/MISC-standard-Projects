@@ -2,3 +2,6 @@ TODO:
 *add comments to main.cpp
 *refactor main.cpp
 *organise main.cpp so it follows a structure -> clean up main.cpp
+
+*MAKE A BETTER DRAW RECT FUNC
+*MAKE A BETTER COLLISION CHECK (is_interecting checker)
