@@ -6,10 +6,15 @@
 #include <conio.h>
 #define cellSide 10
 #define playerRadius 2
-#define rayNumber 10
-#define rayLength 50
+#define playerSpeed 2
+#define playerTurningSpeed 0.1
+#define playerXinit 4
+#define playerYinit 5
+#define rayNumber 40 
+#define rayLength 100
 #define raySteps 50
 #define FOV 2
+#define zoom 2
 
 using namespace tglh;
 TerminalGraphics tgl;
@@ -115,7 +120,7 @@ public:
     }
 };
 
-Player p(4,5,2,0.3);
+Player p(playerXinit,playerYinit,playerSpeed,playerTurningSpeed);
 std::vector<Ray> rayArray;
 
 //ALWAYS INDEX WORLD WITH (y,x)
@@ -150,7 +155,6 @@ void Ray__init__(){
     }
 }
 
-
 //-------------------------------------------------------------------------------------------------------
 //main function:
 //-------------------------------------------------------------------------------------------------------
@@ -159,7 +163,7 @@ void Ray__init__(){
 
  int main(){
     tgl.setWindow(400,400);
-    tgl.setTileset(" .S-");
+    tgl.setTileset(" .S-`'.,-~_:;^+=*<>iv!lI?/|()1t{}[]rjfxnuczmwqpdbkhao#MW&8%B@$02345679ACDEFGHJKLNOPQRSTUVXYZegsy");
     tgl.setBorder();
     tgl.framerate = 1000;
     drawMap();
@@ -179,7 +183,19 @@ void Ray__init__(){
         p.drawPlayer();
         for(int i =0;i<rayNumber;i++){
             double val = rayArray[i].checkRayCollision();
-            tgl.line(p.x,p.y,rayArray[i].x,rayArray[i].y,100,4);
+            tgl.line(p.x,p.y,rayArray[i].x,rayArray[i].y,100,3);
+            if(val!=-1){
+                double d=hypot(p.x-rayArray[i].x,p.y-rayArray[i].y);
+                int height = 2;
+                int middleX = tgl.wallx/2;
+                int middleY = tgl.wally/2;
+                double theta = rayArray[i].angle-p.theta;
+                int c = 10;
+                if(d!=0){  
+                    //NEED BETTER RECT FUNC                  
+                    tgl.fillrect(zoom*(d*sin(theta)+height)+middleY,zoom*tgl.wallx/(rayNumber+0.01),zoom*d*sin(theta)+middleY,zoom*d*cos(theta)+middleX,80-(d/rayLength));
+                }
+            }
         }
         rayArray.clear();
         Ray__init__();
