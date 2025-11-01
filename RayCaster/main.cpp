@@ -8,7 +8,7 @@
 #define playerRadius 2
 #define rayNumber 10
 #define rayLength 50
-#define raySteps 20
+#define raySteps 50
 #define FOV 2
 
 using namespace tglh;
@@ -73,7 +73,7 @@ public:
         double m = dy/dx;
         for(int i = 0;i<dx;i++){
             if(0<x1+i&&x1+1<tgl.wallx&&0<y1+m*i&&y1+m*i<tgl.wally){
-                if(tgl.grid[round(x1+i)][round(y1+m*i)]==1){return true;}
+                if(tgl.grid[(int)(x1+i)][(int)(y1+m*i)]==1){return true;}
             }
         }
         return false;
