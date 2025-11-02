@@ -7,14 +7,14 @@
 #define cellSide 10
 #define playerRadius 2
 #define playerSpeed 2
-#define playerTurningSpeed 0.1
+#define playerTurningSpeed 0.14232
 #define playerXinit 4
 #define playerYinit 5
-#define rayNumber 40 
+#define rayNumber 60 
 #define rayLength 100
 #define raySteps 50
-#define FOV 2
-#define zoom 2
+#define FOV 2.5
+#define zoom 3
 
 using namespace tglh;
 TerminalGraphics tgl;
@@ -72,16 +72,23 @@ public:
     }
 
     bool is_intersecting(double x1,double y1,double x2, double y2){
-        if(x2<x1){swap(x1,x2);swap(y1,y2);}
-        double dx = x2-x1;
-        double dy = y2-y1;
-        double m = dy/dx;
-        for(int i = 0;i<dx;i++){
-            if(0<x1+i&&x1+1<tgl.wallx&&0<y1+m*i&&y1+m*i<tgl.wally){
-                if(tgl.grid[(int)(x1+i)][(int)(y1+m*i)]==1){return true;}
+
+        int steps = 75;
+
+        int vx = x2 - x1; int vy = y2 - y1;
+        double error = 0.01;
+        double stepsizeX = (vx + error) / (steps + error); double stepsizeY = (vy + error) / (steps + error);
+        for (int i = 0; i < steps + 1; i++) {
+            int x = round(x1 + stepsizeX * i);
+            int y = round(y1 + stepsizeY * i);
+            if (x >= 0 && x < tgl.wallx
+                && y >= 0 && y < tgl.wally) { //check if point in bounds
+                if(tgl.grid[x][y] == 1){return true;}
             }
         }
+
         return false;
+
     }
 };
 
@@ -180,10 +187,9 @@ void Ray__init__(){
         tgl.clear(0);
         drawMap();
         
-        p.drawPlayer();
         for(int i =0;i<rayNumber;i++){
             double val = rayArray[i].checkRayCollision();
-            tgl.line(p.x,p.y,rayArray[i].x,rayArray[i].y,100,3);
+            //tgl.line(p.x,p.y,rayArray[i].x,rayArray[i].y,100,3);
             if(val!=-1){
                 double d=hypot(p.x-rayArray[i].x,p.y-rayArray[i].y);
                 int height = 2;
@@ -193,10 +199,16 @@ void Ray__init__(){
                 int c = 10;
                 if(d!=0){  
                     //NEED BETTER RECT FUNC                  
-                    tgl.fillrect(zoom*(d*sin(theta)+height)+middleY,zoom*tgl.wallx/(rayNumber+0.01),zoom*d*sin(theta)+middleY,zoom*d*cos(theta)+middleX,80-(d/rayLength));
+                    tgl.fillrect((zoom)*(d*sin(theta)+height)+middleY,zoom*tgl.wallx/(rayNumber+0.01),(zoom)*d*sin(theta)+middleY,(zoom)*d*cos(theta)+middleX,80-(d/rayLength));
                 }
             }
         }
+
+        for(int i =0;i<rayNumber;i++){
+            tgl.line(p.x,p.y,rayArray[i].x,rayArray[i].y,100,3);
+        }
+        p.drawPlayer();
+        
         rayArray.clear();
         Ray__init__();
         
