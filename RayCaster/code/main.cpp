@@ -6,15 +6,16 @@
 #include <conio.h>
 #define cellSide 10
 #define playerRadius 2
-#define playerSpeed 2
+#define playerSpeed 0.8
 #define playerTurningSpeed 0.14232
 #define playerXinit 4
 #define playerYinit 5
-#define rayNumber 60 
+#define rayNumber 200 
 #define rayLength 100
 #define raySteps 50
-#define FOV 2.5
-#define zoom 3
+#define FOV 1
+#define zoom 1000
+#define gradient 5
 
 using namespace tglh;
 TerminalGraphics tgl;
@@ -153,7 +154,7 @@ void drawMap(){
 }
 
 void Ray__init__(){
-    double angle=p.theta-FOV/2;
+    double angle=p.theta-FOV/2.0;
     double d = FOV/(rayNumber+0.01);
     for(int i = 0;i<rayNumber;i++){
         rayArray.push_back(Ray(p.x,p.y,rayLength,raySteps,angle));
@@ -199,7 +200,8 @@ void Ray__init__(){
                 int c = 10;
                 if(d!=0){  
                     //NEED BETTER RECT FUNC                  
-                    tgl.fillrect((zoom)*(d*sin(theta)+height)+middleY,zoom*tgl.wallx/(rayNumber+0.01),(zoom)*d*sin(theta)+middleY,(zoom)*d*cos(theta)+middleX,80-(d/rayLength));
+                   // tgl.fillrect((zoom)*(d*sin(theta)+height)+middleY,zoom*tgl.wallx/(rayNumber+0.01),(zoom)*d*sin(theta)+middleY,(zoom)*d*cos(theta)+middleX,80-(d/rayLength));
+                    tgl.line(tgl.wallx*sin(theta)+middleX,middleY+zoom/d,tgl.wallx*sin(theta)+middleX,middleY-zoom/(d),100,80-(gradient*d/(rayLength+0.01)) );
                 }
             }
         }
