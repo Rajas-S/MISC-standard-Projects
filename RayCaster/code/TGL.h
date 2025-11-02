@@ -1,4 +1,3 @@
-
 #ifndef TERMINALGRPHICS_V1_1_H
 #define TERMINALGRPHICS_V1_1_H
 
@@ -90,7 +89,7 @@ namespace tglh {
 		//sets the grid position that is lands on to specified int
 		//used for drawing lines
 		void line(double x1, double y1, double x2, double y2, int steps, int value) {
-			if(x1==x2&&y1==y2){grid[round(x1)][round(y1)]==value;}
+			if(x1==x2&&y1==y2){grid[round(x1)][round(y1)]=value;}
 			else{
 				int vx = x2 - x1; int vy = y2 - y1;
 				double error = 0.01;
