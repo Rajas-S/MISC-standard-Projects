@@ -4,18 +4,20 @@
 #include <iostream>
 #include "TGL.h"
 #include <conio.h>
-#define cellSide 10
+#define cellSide 12
 #define playerRadius 2
 #define playerSpeed 0.8
 #define playerTurningSpeed 0.14232
 #define playerXinit 4
 #define playerYinit 5
-#define rayNumber 200 
+#define rayNumber 400 
 #define rayLength 100
-#define raySteps 50
+#define raySteps 400
 #define FOV 1
-#define zoom 1000
-#define gradient 5
+#define zoom 800
+#define fish 0 
+#define gradient 80
+#define raySample 40
 
 using namespace tglh;
 TerminalGraphics tgl;
@@ -101,7 +103,7 @@ public:
     double speed;
     double vx,vy;
     double turnSpeed;
-    double theta=0;
+    double theta=PI/4;
     Player(double x, double y,double speed, double turnSpeed){
         this->x=x*cellSide;this->y=y*cellSide;
         this->speed=speed;
@@ -170,7 +172,7 @@ void Ray__init__(){
 
 
  int main(){
-    tgl.setWindow(400,400);
+    tgl.setWindow(800,450);
     tgl.setTileset(" .S-`'.,-~_:;^+=*<>iv!lI?/|()1t{}[]rjfxnuczmwqpdbkhao#MW&8%B@$02345679ACDEFGHJKLNOPQRSTUVXYZegsy");
     tgl.setBorder();
     tgl.framerate = 1000;
@@ -192,22 +194,24 @@ void Ray__init__(){
             double val = rayArray[i].checkRayCollision();
             //tgl.line(p.x,p.y,rayArray[i].x,rayArray[i].y,100,3);
             if(val!=-1){
-                double d=hypot(p.x-rayArray[i].x,p.y-rayArray[i].y);
-                int height = 2;
-                int middleX = tgl.wallx/2;
-                int middleY = tgl.wally/2;
+                double d=hypot((double)(p.x-rayArray[i].x),(double)(p.y-rayArray[i].y));
+                double middleX = tgl.wallx/2.0;
+                double middleY = tgl.wally/2.0;
                 double theta = rayArray[i].angle-p.theta;
-                int c = 10;
-                if(d!=0){  
+                                
+                if(d>0){  
+                    double h = (zoom / d)+d*fish;
                     //NEED BETTER RECT FUNC                  
                    // tgl.fillrect((zoom)*(d*sin(theta)+height)+middleY,zoom*tgl.wallx/(rayNumber+0.01),(zoom)*d*sin(theta)+middleY,(zoom)*d*cos(theta)+middleX,80-(d/rayLength));
-                    tgl.line(tgl.wallx*sin(theta)+middleX,middleY+zoom/d,tgl.wallx*sin(theta)+middleX,middleY-zoom/(d),100,80-(gradient*d/(rayLength+0.01)) );
+                   int d1 = gradient/d;
+                   if(d1>80){d1=80;}
+                    tgl.line(round(tgl.wallx*sin(theta)+middleX),round(middleY+h),round(tgl.wallx*sin(theta)+middleX),round(middleY-h),1000,(int)(80-d1));
                 }
             }
         }
 
-        for(int i =0;i<rayNumber;i++){
-            tgl.line(p.x,p.y,rayArray[i].x,rayArray[i].y,100,3);
+         for(int i =0;i<rayNumber;i+=raySample){
+             tgl.line(p.x,p.y,rayArray[i].x,rayArray[i].y,100,3);
         }
         p.drawPlayer();
         
